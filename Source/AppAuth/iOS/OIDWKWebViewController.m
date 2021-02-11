@@ -53,6 +53,17 @@ API_AVAILABLE(ios(8.0))
     [self.wkWebView loadRequest:request];
 
     [self.view addSubview:self.wkWebView];
+
+    [self setupCookies];
+}
+
+- (void)setupCookies{
+  WKHTTPCookieStore *webViewStore = self.wkWebView.configuration.websiteDataStore.httpCookieStore;
+  NSHTTPCookieStorage  *newCookies = NSHTTPCookieStorage.sharedHTTPCookieStorage;
+
+  for (NSHTTPCookie *item in newCookies.cookies) {
+    [webViewStore setCookie:item completionHandler:^{}];
+  }
 }
 
 #pragma mark - WKNvigationDelegate
@@ -74,8 +85,6 @@ API_AVAILABLE(ios(8.0))
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler {
-  NSHTTPURLResponse *response = (NSHTTPURLResponse *)navigationResponse;
-
   decisionHandler(WKNavigationActionPolicyAllow);
 }
 
